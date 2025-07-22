@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Devils Inn - Inventory Management Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background-color: #dc2626;
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            border: 3px solid #000;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-card {
+            background-color: white;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.2);
+        }
+        
+        .demo-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .demo-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 10px;
+        }
+        
+        .demo-description {
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        
+        .demo-button {
+            background-color: #dc2626;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid #000;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        
+        .demo-button:hover {
+            background-color: #b91c1c;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .info-section {
+            background-color: white;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .info-header {
+            background-color: #dc2626;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 20px -25px;
+            border-radius: 4px 4px 0 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .pin-demo {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .pin-code {
+            font-family: monospace;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc2626;
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: inline-block;
+            border: 2px solid #dc2626;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👹 AIR DEVILS INN 👹</h1>
+        <p><strong>Inventory Management System</strong></p>
+        <p><em>Louisville's Historic Aviation Bar Since 1934</em></p>
+    </div>
+    
+    <div class="demo-grid">
+        <div class="demo-card" onclick="openDemo('receiving')">
+            <span class="demo-icon">📦</span>
+            <div class="demo-title">Receiving Entry</div>
+            <div class="demo-description">
+                Quick iPad entry when deliveries arrive. Search for items, enter quantities and costs. Automatically updates inventory levels.
+            </div>
+            <button class="demo-button">Try Receiving Demo</button>
+        </div>
+        
+        <div class="demo-card" onclick="openDemo('stock-check')">
+            <span class="demo-icon">🔍</span>
+            <div class="demo-title">Quick Stock Check</div>
+            <div class="demo-description">
+                Instant lookup for bartenders. Search any item to see stock levels, drink prices, and profit margins in real-time.
+            </div>
+            <button class="demo-button">Try Stock Check Demo</button>
+        </div>
+        
+        <div class="demo-card" onclick="openDemo('reports')">
+            <span class="demo-icon">📊</span>
+            <div class="demo-title">Automated Reports</div>
+            <div class="demo-description">
+                Weekly and monthly intelligence. See what ran out, top sellers, and slow-moving inventory automatically.
+            </div>
+            <button class="demo-button">Try Reports Demo</button>
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <div class="info-header">
+            💡 System Overview & Benefits
+        </div>
+        
+        <p><strong>What This Solves:</strong> Replaces manual inventory tracking with automated system that provides real-time insights and prevents stockouts.</p>
+        
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-title">📱 iPad Friendly</div>
+                Works on any tablet or phone. Simple interface for non-technical staff.
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">🔄 Auto Updates</div>
+                Receiving automatically updates inventory. No double data entry required.
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">💰 Cost Tracking</div>
+                Real-time profit margins per drink. Know which items make the most money.
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">🚨 Smart Alerts</div>
+                Automatic warnings before items run out. Prevent lost sales opportunities.
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">📈 Business Intelligence</div>
+                Weekly reports show trends, slow movers, and optimization opportunities.
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-title">🔒 Secure Access</div>
+                PIN protection keeps data private. Easy for managers, secure from unauthorized use.
+            </div>
+        </div>
+        
+        <div style="margin-top: 25px; padding: 20px; background-color: #f8f9fa; border-radius: 4px;">
+            <strong>Implementation Timeline:</strong><br>
+            Week 1: Receiving system • Week 2: Stock lookup • Week 3: Automated reports • Week 4: Staff training & optimization
+        </div>
+    </div>
+
+    <script>
+        function openDemo(demoType) {
+            // In a real setup, you'd link to your actual demo files
+            const demoFiles = {
+                'receiving': 'receiving-demo.html',
+                'stock-check': 'stock-check-demo.html', 
+                'reports': 'reports-demo.html'
+            };
+            
+            // For Claude artifacts demo, we'll just show an alert
+            // In your actual setup, you'd use: window.open(demoFiles[demoType], '_blank');
+            
+            const demoNames = {
+                'receiving': 'Receiving Entry',
+                'stock-check': 'Quick Stock Check',
+                'reports': 'Automated Reports'
+            };
+            
+            alert(`Opening ${demoNames[demoType]} demo...\n\nIn your actual setup, this would open: ${demoFiles[demoType]}`);
+        }
+        
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Air Devils Inn Demo System Loaded');
+            console.log('Founded: 1934 | Louisville, KY');
+            console.log('Ready for board presentation!');
+        });
+    </script>
+</body>
+</html>

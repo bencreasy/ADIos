@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Devils Inn - Quick Stock Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background-color: #dc2626;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            border: 3px solid #000;
+        }
+        
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .search-results {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        .search-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stock-details {
+            background-color: #f8f9fa;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .stock-header {
+            background-color: #dc2626;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #000;
+        }
+        
+        .stock-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .drinks-section {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        .drinks-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .drink-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .drink-item:last-child {
+            border-bottom: none;
+        }
+        
+        .drink-name {
+            flex-grow: 1;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .drink-price {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 16px;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .stock-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .stock-good {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .stock-low {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .stock-out {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .clear-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .clear-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .stock-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👹 AIR DEVILS INN 👹</h1>
+        <h2>🔍 Quick Stock Check</h2>
+        <p>Check inventory levels & drink prices</p>
+    </div>
+    
+    <div class="form-container">
+        <div class="input-group">
+            <label for="itemSearch">Search Item:</label>
+            <input type="text" id="itemSearch" placeholder="Type item name or brand..." autocomplete="off">
+            <div id="searchResults" class="search-results" style="display: none;"></div>
+        </div>
+        
+        <div id="stockDetails" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Sample inventory with drink pricing data
+        const inventoryWithDrinks = [
+            {
+                name: "Jameson",
+                category: "Whiskey",
+                currentStock: 8,
+                unitCost: 28.99,
+                drinks: [
+                    {name: "Jameson & Ginger", price: 8.50, size: "1.5oz"},
+                    {name: "Irish Coffee", price: 9.00, size: "1.5oz"},
+                    {name: "Jameson Neat", price: 7.00, size: "1.5oz"},
+                    {name: "Jameson Rocks", price: 8.00, size: "2oz"}
+                ]
+            },
+            {
+                name: "Grey Goose",
+                category: "Vodka",
+                currentStock: 3,
+                unitCost: 45.99,
+                drinks: [
+                    {name: "Grey Goose Martini", price: 12.00, size: "2oz"},
+                    {name: "Grey Goose & Tonic", price: 10.50, size: "1.5oz"},
+                    {name: "Grey Goose Neat", price: 11.00, size: "2oz"}
+                ]
+            },
+            {
+                name: "Jack Daniels",
+                category: "Whiskey",
+                currentStock: 12,
+                unitCost: 24.99,
+                drinks: [
+                    {name: "Jack & Coke", price: 7.50, size: "1.5oz"},
+                    {name: "Jack Daniels Neat", price: 6.50, size: "1.5oz"},
+                    {name: "Lynchburg Lemonade", price: 8.00, size: "1.5oz"},
+                    {name: "Jack on the Rocks", price: 7.00, size: "2oz"}
+                ]
+            },
+            {
+                name: "Crown Royal",
+                category: "Whiskey",
+                currentStock: 1,
+                unitCost: 32.99,
+                drinks: [
+                    {name: "Crown & Ginger", price: 9.00, size: "1.5oz"},
+                    {name: "Crown Royal Neat", price: 8.50, size: "1.5oz"},
+                    {name: "Crown on the Rocks", price: 9.00, size: "2oz"}
+                ]
+            },
+            {
+                name: "Titos",
+                category: "Vodka",
+                currentStock: 15,
+                unitCost: 19.99,
+                drinks: [
+                    {name: "Titos & Soda", price: 6.50, size: "1.5oz"},
+                    {name: "Titos Martini", price: 7.50, size: "2oz"},
+                    {name: "Moscow Mule (Titos)", price: 8.00, size: "1.5oz"}
+                ]
+            },
+            {
+                name: "Angels Envy",
+                category: "Bourbon",
+                currentStock: 0,
+                unitCost: 49.99,
+                drinks: [
+                    {name: "Angels Envy Neat", price: 14.00, size: "1.5oz"},
+                    {name: "Angels Envy Old Fashioned", price: 15.00, size: "2oz"}
+                ]
+            }
+        ];
+
+        const itemSearch = document.getElementById('itemSearch');
+        const searchResults = document.getElementById('searchResults');
+        const stockDetails = document.getElementById('stockDetails');
+
+        itemSearch.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            const matches = inventoryWithDrinks.filter(item => 
+                item.name.toLowerCase().includes(query)
+            );
+
+            if (matches.length > 0) {
+                searchResults.innerHTML = matches.map(item => 
+                    `<div class="search-item" onclick="showStockDetails('${item.name}')">
+                        <strong>${item.name}</strong> - ${item.category} (${item.currentStock} in stock)
+                    </div>`
+                ).join('');
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.innerHTML = '<div class="search-item">No matches found</div>';
+                searchResults.style.display = 'block';
+            }
+        });
+
+        function showStockDetails(itemName) {
+            const item = inventoryWithDrinks.find(inv => inv.name === itemName);
+            if (!item) return;
+
+            searchResults.style.display = 'none';
+            itemSearch.value = itemName;
+
+            const stockStatus = getStockStatus(item.currentStock);
+            const totalValue = (item.currentStock * item.unitCost).toFixed(2);
+
+            stockDetails.innerHTML = `
+                <div class="stock-details">
+                    <div class="stock-header">
+                        <h2>📦 ${item.name}</h2>
+                        <span class="stock-status ${stockStatus.class}">${stockStatus.text}</span>
+                    </div>
+                    
+                    <div class="stock-info">
+                        <div class="info-card">
+                            <div class="info-label">Current Stock</div>
+                            <div class="info-value">${item.currentStock} bottles</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Unit Cost</div>
+                            <div class="info-value">$${item.unitCost.toFixed(2)}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Category</div>
+                            <div class="info-value">${item.category}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Total Value</div>
+                            <div class="info-value">$${totalValue}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="drinks-section">
+                        <div class="drinks-header">🍸 Drinks Using ${item.name}</div>
+                        ${item.drinks.map(drink => `
+                            <div class="drink-item">
+                                <div class="drink-name">${drink.name} <small>(${drink.size})</small></div>
+                                <div class="drink-price">$${drink.price.toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+                </div>
+            `;
+            
+            stockDetails.style.display = 'block';
+        }
+
+        function getStockStatus(stock) {
+            if (stock === 0) {
+                return {class: 'stock-out', text: 'Out of Stock'};
+            } else if (stock <= 3) {
+                return {class: 'stock-low', text: 'Low Stock'};
+            } else {
+                return {class: 'stock-good', text: 'In Stock'};
+            }
+        }
+
+        function clearSearch() {
+            itemSearch.value = '';
+            stockDetails.style.display = 'none';
+            searchResults.style.display = 'none';
+        }
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.input-group')) {
+                searchResults.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

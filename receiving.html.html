@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Devils Inn - Receiving Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background-color: #dc2626;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            border: 3px solid #000;
+        }
+        
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .search-results {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        .search-item:last-child {
+            border-bottom: none;
+        }
+        
+        .selected-item {
+            background-color: #d4edda;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 2px solid #28a745;
+        }
+        
+        .btn {
+            background-color: #dc2626;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            border: 2px solid #000;
+        }
+        
+        .btn:hover {
+            background-color: #b91c1c;
+        }
+        
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .summary {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success {
+            background-color: #fef2f2;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            border: 1px solid #fecaca;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👹 AIR DEVILS INN 👹</h1>
+        <h2>📦 Receiving Entry</h2>
+        <p>Quick inventory intake for managers</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="receivingForm">
+            <div class="input-group">
+                <label for="itemSearch">🔍 Item Name (as shown on invoice):</label>
+                <input type="text" id="itemSearch" placeholder="Start typing item name..." autocomplete="off">
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+                <div id="selectedItem" class="selected-item" style="display: none;"></div>
+            </div>
+            
+            <div class="input-group">
+                <label for="quantity">📊 Quantity Received:</label>
+                <input type="number" id="quantity" placeholder="Enter number of units" min="1" step="1">
+                <div class="error" id="quantityError"></div>
+            </div>
+            
+            <div class="input-group">
+                <label for="unitCost">💰 Unit Cost ($):</label>
+                <input type="number" id="unitCost" placeholder="Cost per unit" min="0" step="0.01">
+                <div class="error" id="costError"></div>
+            </div>
+            
+            <div class="input-group">
+                <label for="supplier">🏪 Supplier:</label>
+                <select id="supplier">
+                    <option value="">Select supplier...</option>
+                    <option value="Total Wine">Total Wine</option>
+                    <option value="Brown-Forman">Brown-Forman</option>
+                    <option value="Heaven Hill">Heaven Hill</option>
+                    <option value="Sazerac">Sazerac</option>
+                    <option value="Beam Suntory">Beam Suntory</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn" disabled>➕ Add to Inventory</button>
+        </form>
+        
+        <div id="successMessage" class="success" style="display: none;"></div>
+        
+        <div class="summary">
+            <h3>📋 Today's Receiving Summary</h3>
+            <div id="receivingSummary">
+                <p><em>No items received yet today.</em></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample inventory data based on the spreadsheet
+        const inventory = [
+            {name: "Angels Envy", category: "Bourbon", currentStock: 0},
+            {name: "Buffalo Trace", category: "Bourbon", currentStock: 0},
+            {name: "Bulleit", category: "Bourbon", currentStock: 0},
+            {name: "Jim Beam", category: "Bourbon", currentStock: 0},
+            {name: "Jim Beam 7 Year", category: "Bourbon", currentStock: 0},
+            {name: "Jim Beam Peach", category: "Bourbon", currentStock: 0},
+            {name: "Maker's Mark", category: "Bourbon", currentStock: 0},
+            {name: "Old Bardstown", category: "Bourbon", currentStock: 0},
+            {name: "Old Forester", category: "Bourbon", currentStock: 0},
+            {name: "Very Old Barton", category: "Bourbon", currentStock: 0},
+            {name: "Wild Turkey 101", category: "Bourbon", currentStock: 0},
+            {name: "Woodford Reserve", category: "Bourbon", currentStock: 0},
+            {name: "Beefeater", category: "Gin", currentStock: 0},
+            {name: "Bluecoat Dry Gin", category: "Gin", currentStock: 0},
+            {name: "Bombay Saffire", category: "Gin", currentStock: 0},
+            {name: "Tanqueray", category: "Gin", currentStock: 0},
+            {name: "Kaisha", category: "Liqueur", currentStock: 0},
+            {name: "Bacardi", category: "Rum", currentStock: 0},
+            {name: "Bacardi Gold", category: "Rum", currentStock: 0},
+            {name: "Captain Morgan", category: "Rum", currentStock: 0},
+            {name: "Malibu", category: "Rum", currentStock: 0},
+            {name: "Myers Dark Rum", category: "Rum", currentStock: 0},
+            {name: "Sailor Jerry", category: "Rum", currentStock: 0},
+            {name: "Jagermeister", category: "Schnapps", currentStock: 0},
+            {name: "Rumplemintz", category: "Schnapps", currentStock: 0},
+            {name: "Triple Sec", category: "Schnapps", currentStock: 0},
+            {name: "1800 Gold", category: "Tequila", currentStock: 0},
+            {name: "1800 Silver", category: "Tequila", currentStock: 0},
+            {name: "Cuervo Gold", category: "Tequila", currentStock: 0},
+            {name: "Cuervo Silver", category: "Tequila", currentStock: 0},
+            {name: "Hornitos", category: "Tequila", currentStock: 0},
+            {name: "Jimeca", category: "Tequila", currentStock: 0},
+            {name: "Absolute", category: "Vodka", currentStock: 0},
+            {name: "Absolute Vanilla", category: "Vodka", currentStock: 0},
+            {name: "Deep Eddie Lemon", category: "Vodka", currentStock: 0},
+            {name: "Grey Goose", category: "Vodka", currentStock: 0},
+            {name: "Pinnacle Cake", category: "Vodka", currentStock: 0},
+            {name: "Smirnoff", category: "Vodka", currentStock: 0},
+            {name: "Titos", category: "Vodka", currentStock: 0},
+            {name: "Wheatley", category: "Vodka", currentStock: 0},
+            {name: "Crown Royal", category: "Whiskey", currentStock: 0},
+            {name: "Dewars", category: "Whiskey", currentStock: 0},
+            {name: "Fireball", category: "Whiskey", currentStock: 0},
+            {name: "Jack Daniels", category: "Whiskey", currentStock: 0},
+            {name: "Jameson", category: "Whiskey", currentStock: 0},
+            {name: "Jameson Orange", category: "Whiskey", currentStock: 0},
+            {name: "Mellow Corn", category: "Whiskey", currentStock: 0},
+            {name: "Proper Twelve", category: "Whiskey", currentStock: 0},
+            {name: "Screwball", category: "Whiskey", currentStock: 0}
+        ];
+
+        let selectedItem = null;
+        let receivedItems = [];
+
+        // Search functionality
+        const itemSearch = document.getElementById('itemSearch');
+        const searchResults = document.getElementById('searchResults');
+        const selectedItemDiv = document.getElementById('selectedItem');
+
+        itemSearch.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            const matches = inventory.filter(item => 
+                item.name.toLowerCase().includes(query)
+            );
+
+            if (matches.length > 0) {
+                searchResults.innerHTML = matches.map(item => 
+                    `<div class="search-item" onclick="selectItem('${item.name}', '${item.category}')">
+                        <strong>${item.name}</strong> - ${item.category}
+                    </div>`
+                ).join('');
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.innerHTML = '<div class="search-item">No matches found</div>';
+                searchResults.style.display = 'block';
+            }
+        });
+
+        function selectItem(name, category) {
+            selectedItem = {name, category};
+            itemSearch.value = name;
+            searchResults.style.display = 'none';
+            selectedItemDiv.innerHTML = `
+                <strong>Selected:</strong> ${name} (${category})
+                <button type="button" style="float: right; background: none; border: none; color: #dc3545; cursor: pointer;" onclick="clearSelection()">✕</button>
+            `;
+            selectedItemDiv.style.display = 'block';
+            validateForm();
+        }
+
+        function clearSelection() {
+            selectedItem = null;
+            itemSearch.value = '';
+            selectedItemDiv.style.display = 'none';
+            validateForm();
+        }
+
+        // Form validation
+        function validateForm() {
+            const quantity = document.getElementById('quantity').value;
+            const unitCost = document.getElementById('unitCost').value;
+            const supplier = document.getElementById('supplier').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            const isValid = selectedItem && quantity > 0 && unitCost >= 0 && supplier;
+            submitBtn.disabled = !isValid;
+        }
+
+        // Add event listeners for validation
+        ['quantity', 'unitCost', 'supplier'].forEach(id => {
+            document.getElementById(id).addEventListener('input', validateForm);
+        });
+
+        // Form submission
+        document.getElementById('receivingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const unitCost = parseFloat(document.getElementById('unitCost').value);
+            const supplier = document.getElementById('supplier').value;
+            const totalCost = quantity * unitCost;
+
+            const receivedItem = {
+                ...selectedItem,
+                quantity,
+                unitCost,
+                totalCost,
+                supplier,
+                timestamp: new Date().toLocaleString()
+            };
+
+            receivedItems.push(receivedItem);
+            
+            // Update inventory stock (simulation)
+            const inventoryItem = inventory.find(item => item.name === selectedItem.name);
+            if (inventoryItem) {
+                inventoryItem.currentStock += quantity;
+            }
+
+            // Show success message
+            document.getElementById('successMessage').innerHTML = 
+                `✅ Successfully added ${quantity} units of ${selectedItem.name} to inventory!`;
+            document.getElementById('successMessage').style.display = 'block';
+
+            // Update summary
+            updateSummary();
+
+            // Reset form
+            this.reset();
+            clearSelection();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        });
+
+        function updateSummary() {
+            const summaryDiv = document.getElementById('receivingSummary');
+            
+            if (receivedItems.length === 0) {
+                summaryDiv.innerHTML = '<p><em>No items received yet today.</em></p>';
+                return;
+            }
+
+            const totalValue = receivedItems.reduce((sum, item) => sum + item.totalCost, 0);
+            const totalItems = receivedItems.reduce((sum, item) => sum + item.quantity, 0);
+
+            summaryDiv.innerHTML = `
+                <p><strong>Items Received:</strong> ${totalItems} units</p>
+                <p><strong>Total Value:</strong> $${totalValue.toFixed(2)}</p>
+                <hr>
+                ${receivedItems.map(item => `
+                    <div style="margin-bottom: 10px; padding: 10px; background-color: white; border-radius: 4px;">
+                        <strong>${item.name}</strong> - ${item.quantity} units @ $${item.unitCost.toFixed(2)} = $${item.totalCost.toFixed(2)}
+                        <br><small>Supplier: ${item.supplier} | ${item.timestamp}</small>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Initialize
+        updateSummary();
+    </script>
+</body>
+</html>
