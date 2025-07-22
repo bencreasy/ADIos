@@ -156,11 +156,23 @@
                 <div id="selectedItem" class="selected-item" style="display: none;"></div>
             </div>
             
-            <div class="input-group">
-                <label for="quantity">📊 Quantity Received:</label>
-                <input type="number" id="quantity" placeholder="Enter number of units" min="1" step="1">
-                <div class="error" id="quantityError"></div>
-            </div>
+<div class="input-group">
+    <label for="quantity">📊 Quantity Received:</label>
+    <input type="number" id="quantity" placeholder="Enter quantity" min="1" step="1">
+    
+    <div style="margin-top: 10px;">
+        <label>
+            <input type="checkbox" id="receivingByCases"> 
+            Receiving by cases (will convert to bottles automatically)
+        </label>
+    </div>
+    
+    <div id="caseInfo" style="display: none; margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+        <small>Case size for <span id="selectedItemCase"></span>: <span id="caseSize">12</span> bottles per case</small>
+        <br>
+        <small><span id="quantityPreview">0</span> cases = <span id="bottlePreview">0</span> bottles total</small>
+    </div>
+</div>
             
             <div class="input-group">
                 <label for="unitCost">💰 Unit Cost ($):</label>
