@@ -253,22 +253,16 @@
     </div>
 
     <script>
-        function openDemo(demoType) {
-            // In a real setup, you'd link to your actual demo files
-            const demoFiles = {
-                'receiving': 'receiving-demo.html',
-                'stock-check': 'stock-check-demo.html', 
-                'reports': 'reports-demo.html'
+        function openPage(pageName) {
+            const baseUrl = 'https://sites.google.com/ghostlab.net/adios/'; // Your actual site URL
+            const pageUrls = {
+                'receiving': baseUrl + 'receiving',
+                'stockcheck': baseUrl + 'stock-check', 
+                'reports': baseUrl + 'reports'
             };
-            
-            // For Claude artifacts demo, we'll just show an alert
-            // In your actual setup, you'd use: window.open(demoFiles[demoType], '_blank');
-            
-            const demoNames = {
-                'receiving': 'Receiving Entry',
-                'stock-check': 'Quick Stock Check',
-                'reports': 'Automated Reports'
-            };
+    
+        window.open(pageUrls[pageName], '_blank');
+        }
             
             alert(`Opening ${demoNames[demoType]} demo...\n\nIn your actual setup, this would open: ${demoFiles[demoType]}`);
         }
