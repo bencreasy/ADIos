@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Devils Inn - Receiving Demo</title>
+    <title>Air Devils Inn - Receiving</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,16 +17,16 @@
             background-color: #dc2626;
             color: white;
             padding: 20px;
-            border-radius: 8px 8px 0 0;
             text-align: center;
             border: 3px solid #000;
+            margin-bottom: 20px;
         }
         
         .form-container {
             background-color: white;
             padding: 30px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px solid #000;
+            margin-bottom: 20px;
         }
         
         .input-group {
@@ -37,40 +37,40 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #000;
         }
         
         input, select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #000;
             font-size: 16px;
             box-sizing: border-box;
         }
         
         input:focus, select:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #dc2626;
         }
         
         .search-results {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background-color: white;
+            border: 2px solid #000;
             margin-top: 5px;
             max-height: 200px;
             overflow-y: auto;
+            display: none;
         }
         
         .search-item {
             padding: 10px;
             cursor: pointer;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #000;
         }
         
         .search-item:hover {
-            background-color: #e9ecef;
+            background-color: #dc2626;
+            color: white;
         }
         
         .search-item:last-child {
@@ -78,24 +78,54 @@
         }
         
         .selected-item {
-            background-color: #d4edda;
+            background-color: #f5f5f5;
             padding: 15px;
-            border-radius: 4px;
+            border: 2px solid #dc2626;
             margin: 10px 0;
-            border: 2px solid #28a745;
+        }
+        
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .checkbox-row input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .checkbox-row label {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .case-info {
+            background-color: #fff3cd;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #000;
+            display: none;
+        }
+        
+        .stock-count-info {
+            background-color: #fef2f2;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #dc2626;
+            display: none;
         }
         
         .btn {
             background-color: #dc2626;
             color: white;
             padding: 15px 30px;
-            border: none;
-            border-radius: 4px;
+            border: 3px solid #000;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
-            border: 2px solid #000;
         }
         
         .btn:hover {
@@ -107,155 +137,113 @@
             cursor: not-allowed;
         }
         
-        .summary {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 4px;
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border: 2px solid #000;
             margin-top: 20px;
+            display: none;
         }
         
         .error {
-            color: #dc3545;
+            color: #dc2626;
             font-size: 14px;
             margin-top: 5px;
+            font-weight: bold;
         }
         
-        .success {
-            background-color: #fef2f2;
-            color: #dc2626;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-            border: 1px solid #fecaca;
-        }
-        
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>👹 AIR DEVILS INN 👹</h1>
-        <h2>📦 Receiving Entry</h2>
-        <p>Quick inventory intake for managers</p>
+        <h2>📦 RECEIVING ENTRY</h2>
     </div>
     
     <div class="form-container">
-        <form id="receivingForm">
+        <div id="loadingMessage" class="loading">
+            Loading inventory data...
+        </div>
+        
+        <form id="receivingForm" style="display: none;">
             <div class="input-group">
-                <label for="itemSearch">🔍 Item Name (as shown on invoice):</label>
+                <label for="itemSearch">🔍 Item Name:</label>
                 <input type="text" id="itemSearch" placeholder="Start typing item name..." autocomplete="off">
-                <div id="searchResults" class="search-results" style="display: none;"></div>
+                <div id="searchResults" class="search-results"></div>
                 <div id="selectedItem" class="selected-item" style="display: none;"></div>
             </div>
             
-        <div class="input-group">
-            <label for="quantity">📊 Quantity Received:</label>
-            <input type="number" id="quantity" placeholder="Enter quantity" min="1" step="1">
-    
-            <div style="margin-top: 10px; display: flex; align-items: center;">
-                <input type="checkbox" id="receivingByCases" style="width: auto; margin-right: 8px;"> 
-                <label for="receivingByCases" style="margin: 0; cursor: pointer;">
-                    Receiving by cases (will convert to bottles automatically)
-                </label>
-            </div>
-        </div>
-            
             <div class="input-group">
-                <label for="unitCost">💰 Unit Cost ($):</label>
-                <input type="number" id="unitCost" placeholder="Cost per unit" min="0" step="0.01">
-                <div class="error" id="costError"></div>
-            </div>
-            
-            <div class="input-group">
-                <label for="supplier">🏪 Supplier:</label>
+                <label for="supplier">🏪 Entry Type:</label>
                 <select id="supplier">
-                    <option value="">Select supplier...</option>
+                    <option value="">Select type...</option>
+                    <option value="Stock Count">📊 Stock Count (Audit)</option>
                     <option value="Total Wine">Total Wine</option>
                     <option value="Brown-Forman">Brown-Forman</option>
                     <option value="Heaven Hill">Heaven Hill</option>
                     <option value="Sazerac">Sazerac</option>
                     <option value="Beam Suntory">Beam Suntory</option>
-                    <option value="Other">Other</option>
+                    <option value="Other">Other Supplier</option>
                 </select>
             </div>
             
-            <button type="submit" class="btn" id="submitBtn" disabled>➕ Add to Inventory</button>
+            <div id="stockCountInfo" class="stock-count-info">
+                <strong>📊 STOCK COUNT MODE</strong><br>
+                Enter the ACTUAL count you see. This will SET the inventory to this number (not add to it).
+            </div>
+            
+            <div class="input-group">
+                <label for="quantity" id="quantityLabel">📊 Quantity Received:</label>
+                <input type="number" id="quantity" placeholder="Enter quantity" min="1" step="1">
+                
+                <div class="checkbox-row" id="caseCheckboxRow">
+                    <input type="checkbox" id="receivingByCases">
+                    <label for="receivingByCases">Receiving by cases (will convert to bottles automatically)</label>
+                </div>
+                
+                <div id="caseInfo" class="case-info">
+                    <small>Case size for <span id="selectedItemCase"></span>: <span id="caseSize">12</span> bottles per case</small><br>
+                    <small><span id="quantityPreview">0</span> cases = <span id="bottlePreview">0</span> bottles total</small>
+                </div>
+                
+                <div class="error" id="quantityError"></div>
+            </div>
+            
+            <div class="input-group" id="unitCostGroup">
+                <label for="unitCost">💰 Unit Cost ($):</label>
+                <input type="number" id="unitCost" placeholder="Cost per unit" min="0" step="0.01">
+                <div class="error" id="costError"></div>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn" disabled>➕ ADD TO INVENTORY</button>
         </form>
         
-        <div id="successMessage" class="success" style="display: none;"></div>
-        
-        <div class="summary">
-            <h3>📋 Today's Receiving Summary</h3>
-            <div id="receivingSummary">
-                <p><em>No items received yet today.</em></p>
-            </div>
-        </div>
+        <div id="successMessage" class="success"></div>
     </div>
 
     <script>
-        // Sample inventory data based on the spreadsheet
-        const inventory = [
-            {name: "Angels Envy", category: "Bourbon", currentStock: 0},
-            {name: "Buffalo Trace", category: "Bourbon", currentStock: 0},
-            {name: "Bulleit", category: "Bourbon", currentStock: 0},
-            {name: "Jim Beam", category: "Bourbon", currentStock: 0},
-            {name: "Jim Beam 7 Year", category: "Bourbon", currentStock: 0},
-            {name: "Jim Beam Peach", category: "Bourbon", currentStock: 0},
-            {name: "Maker's Mark", category: "Bourbon", currentStock: 0},
-            {name: "Old Bardstown", category: "Bourbon", currentStock: 0},
-            {name: "Old Forester", category: "Bourbon", currentStock: 0},
-            {name: "Very Old Barton", category: "Bourbon", currentStock: 0},
-            {name: "Wild Turkey 101", category: "Bourbon", currentStock: 0},
-            {name: "Woodford Reserve", category: "Bourbon", currentStock: 0},
-            {name: "Beefeater", category: "Gin", currentStock: 0},
-            {name: "Bluecoat Dry Gin", category: "Gin", currentStock: 0},
-            {name: "Bombay Saffire", category: "Gin", currentStock: 0},
-            {name: "Tanqueray", category: "Gin", currentStock: 0},
-            {name: "Kaisha", category: "Liqueur", currentStock: 0},
-            {name: "Bacardi", category: "Rum", currentStock: 0},
-            {name: "Bacardi Gold", category: "Rum", currentStock: 0},
-            {name: "Captain Morgan", category: "Rum", currentStock: 0},
-            {name: "Malibu", category: "Rum", currentStock: 0},
-            {name: "Myers Dark Rum", category: "Rum", currentStock: 0},
-            {name: "Sailor Jerry", category: "Rum", currentStock: 0},
-            {name: "Jagermeister", category: "Schnapps", currentStock: 0},
-            {name: "Rumplemintz", category: "Schnapps", currentStock: 0},
-            {name: "Triple Sec", category: "Schnapps", currentStock: 0},
-            {name: "1800 Gold", category: "Tequila", currentStock: 0},
-            {name: "1800 Silver", category: "Tequila", currentStock: 0},
-            {name: "Cuervo Gold", category: "Tequila", currentStock: 0},
-            {name: "Cuervo Silver", category: "Tequila", currentStock: 0},
-            {name: "Hornitos", category: "Tequila", currentStock: 0},
-            {name: "Jimeca", category: "Tequila", currentStock: 0},
-            {name: "Absolute", category: "Vodka", currentStock: 0},
-            {name: "Absolute Vanilla", category: "Vodka", currentStock: 0},
-            {name: "Deep Eddie Lemon", category: "Vodka", currentStock: 0},
-            {name: "Grey Goose", category: "Vodka", currentStock: 0},
-            {name: "Pinnacle Cake", category: "Vodka", currentStock: 0},
-            {name: "Smirnoff", category: "Vodka", currentStock: 0},
-            {name: "Titos", category: "Vodka", currentStock: 0},
-            {name: "Wheatley", category: "Vodka", currentStock: 0},
-            {name: "Crown Royal", category: "Whiskey", currentStock: 0},
-            {name: "Dewars", category: "Whiskey", currentStock: 0},
-            {name: "Fireball", category: "Whiskey", currentStock: 0},
-            {name: "Jack Daniels", category: "Whiskey", currentStock: 0},
-            {name: "Jameson", category: "Whiskey", currentStock: 0},
-            {name: "Jameson Orange", category: "Whiskey", currentStock: 0},
-            {name: "Mellow Corn", category: "Whiskey", currentStock: 0},
-            {name: "Proper Twelve", category: "Whiskey", currentStock: 0},
-            {name: "Screwball", category: "Whiskey", currentStock: 0}
-        ];
-
+        let inventory = [];
         let selectedItem = null;
-        let receivedItems = [];
+
+        // Load inventory data when page loads
+        google.script.run
+            .withSuccessHandler(loadInventory)
+            .withFailureHandler(showError)
+            .getInventoryData();
+
+        function loadInventory(data) {
+            inventory = data;
+            console.log('Loaded', inventory.length, 'inventory items');
+            
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('receivingForm').style.display = 'block';
+        }
 
         // Search functionality
         const itemSearch = document.getElementById('itemSearch');
@@ -270,13 +258,13 @@
             }
 
             const matches = inventory.filter(item => 
-                item.name.toLowerCase().includes(query)
+                item.itemName && item.itemName.toLowerCase().includes(query)
             );
 
             if (matches.length > 0) {
-                searchResults.innerHTML = matches.map(item => 
-                    `<div class="search-item" onclick="selectItem('${item.name}', '${item.category}')">
-                        <strong>${item.name}</strong> - ${item.category}
+                searchResults.innerHTML = matches.slice(0, 10).map(item => 
+                    `<div class="search-item" onclick="selectItem('${item.itemName.replace(/'/g, "\\'")}', '${item.type}', ${item.caseSize || 1}, ${item.stock})">
+                        <strong>${item.itemName}</strong> - ${item.type} (Current: ${item.stock})
                     </div>`
                 ).join('');
                 searchResults.style.display = 'block';
@@ -286,15 +274,21 @@
             }
         });
 
-        function selectItem(name, category) {
-            selectedItem = {name, category};
+        function selectItem(name, type, caseSize, currentStock) {
+            selectedItem = {name, type, caseSize, currentStock};
             itemSearch.value = name;
             searchResults.style.display = 'none';
+            
             selectedItemDiv.innerHTML = `
-                <strong>Selected:</strong> ${name} (${category})
-                <button type="button" style="float: right; background: none; border: none; color: #dc3545; cursor: pointer;" onclick="clearSelection()">✕</button>
+                <strong>Selected:</strong> ${name} (${type}) - Current Stock: ${currentStock}
+                <button type="button" style="float: right; background: none; border: none; color: #dc2626; cursor: pointer; font-size: 18px;" onclick="clearSelection()">✕</button>
             `;
             selectedItemDiv.style.display = 'block';
+            
+            // Update case info
+            document.getElementById('selectedItemCase').textContent = name;
+            document.getElementById('caseSize').textContent = caseSize || 1;
+            
             validateForm();
         }
 
@@ -302,7 +296,62 @@
             selectedItem = null;
             itemSearch.value = '';
             selectedItemDiv.style.display = 'none';
+            document.getElementById('caseInfo').style.display = 'none';
+            document.getElementById('receivingByCases').checked = false;
             validateForm();
+        }
+
+        // Supplier selection handling
+        document.getElementById('supplier').addEventListener('change', function() {
+            const isStockCount = this.value === 'Stock Count';
+            const quantityLabel = document.getElementById('quantityLabel');
+            const stockCountInfo = document.getElementById('stockCountInfo');
+            const unitCostGroup = document.getElementById('unitCostGroup');
+            const caseCheckboxRow = document.getElementById('caseCheckboxRow');
+            
+            if (isStockCount) {
+                quantityLabel.textContent = '📊 Actual Count on Hand:';
+                stockCountInfo.style.display = 'block';
+                unitCostGroup.style.display = 'none';
+                caseCheckboxRow.style.display = 'none';
+                document.getElementById('caseInfo').style.display = 'none';
+                document.getElementById('receivingByCases').checked = false;
+            } else {
+                quantityLabel.textContent = '📊 Quantity Received:';
+                stockCountInfo.style.display = 'none';
+                unitCostGroup.style.display = 'block';
+                caseCheckboxRow.style.display = 'flex';
+            }
+            
+            validateForm();
+        });
+
+        // Case checkbox handling
+        document.getElementById('receivingByCases').addEventListener('change', function() {
+            const caseInfo = document.getElementById('caseInfo');
+            if (this.checked && selectedItem) {
+                caseInfo.style.display = 'block';
+                updateCasePreview();
+            } else {
+                caseInfo.style.display = 'none';
+            }
+        });
+
+        // Quantity input handling
+        document.getElementById('quantity').addEventListener('input', function() {
+            if (document.getElementById('receivingByCases').checked) {
+                updateCasePreview();
+            }
+            validateForm();
+        });
+
+        function updateCasePreview() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const caseSize = selectedItem ? (selectedItem.caseSize || 1) : 1;
+            const bottles = quantity * caseSize;
+            
+            document.getElementById('quantityPreview').textContent = quantity;
+            document.getElementById('bottlePreview').textContent = bottles;
         }
 
         // Form validation
@@ -310,14 +359,19 @@
             const quantity = document.getElementById('quantity').value;
             const unitCost = document.getElementById('unitCost').value;
             const supplier = document.getElementById('supplier').value;
+            const isStockCount = supplier === 'Stock Count';
             const submitBtn = document.getElementById('submitBtn');
 
-            const isValid = selectedItem && quantity > 0 && unitCost >= 0 && supplier;
+            const isValid = selectedItem && 
+                           quantity > 0 && 
+                           supplier &&
+                           (isStockCount || unitCost >= 0);
+            
             submitBtn.disabled = !isValid;
         }
 
         // Add event listeners for validation
-        ['quantity', 'unitCost', 'supplier'].forEach(id => {
+        ['quantity', 'unitCost'].forEach(id => {
             document.getElementById(id).addEventListener('input', validateForm);
         });
 
@@ -325,72 +379,79 @@
         document.getElementById('receivingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const quantity = parseInt(document.getElementById('quantity').value);
-            const unitCost = parseFloat(document.getElementById('unitCost').value);
+            let quantity = parseInt(document.getElementById('quantity').value);
+            const unitCost = parseFloat(document.getElementById('unitCost').value) || 0;
             const supplier = document.getElementById('supplier').value;
-            const totalCost = quantity * unitCost;
+            const isStockCount = supplier === 'Stock Count';
+            const receivingByCases = document.getElementById('receivingByCases').checked;
 
-            const receivedItem = {
-                ...selectedItem,
-                quantity,
-                unitCost,
-                totalCost,
-                supplier,
-                timestamp: new Date().toLocaleString()
-            };
-
-            receivedItems.push(receivedItem);
-            
-            // Update inventory stock (simulation)
-            const inventoryItem = inventory.find(item => item.name === selectedItem.name);
-            if (inventoryItem) {
-                inventoryItem.currentStock += quantity;
+            // Convert cases to bottles if needed
+            if (receivingByCases && !isStockCount) {
+                quantity = quantity * (selectedItem.caseSize || 1);
             }
 
-            // Show success message
-            document.getElementById('successMessage').innerHTML = 
-                `✅ Successfully added ${quantity} units of ${selectedItem.name} to inventory!`;
-            document.getElementById('successMessage').style.display = 'block';
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ PROCESSING...';
+            submitBtn.disabled = true;
 
-            // Update summary
-            updateSummary();
+            // Call Apps Script function
+            google.script.run
+                .withSuccessHandler(handleSuccess)
+                .withFailureHandler(handleError)
+                .addReceiving(selectedItem.name, quantity, unitCost, supplier, isStockCount);
 
-            // Reset form
-            this.reset();
-            clearSelection();
-            
-            // Hide success message after 3 seconds
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 3000);
+            function handleSuccess(result) {
+                if (result.success) {
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.innerHTML = `✅ ${result.message}`;
+                    successMsg.style.display = 'block';
+
+                    // Reset form
+                    document.getElementById('receivingForm').reset();
+                    clearSelection();
+                    
+                    // Reload inventory data
+                    google.script.run
+                        .withSuccessHandler(loadInventory)
+                        .getInventoryData();
+                        
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 5000);
+                } else {
+                    handleError(result.error || 'Unknown error');
+                }
+
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                validateForm();
+            }
+
+            function handleError(error) {
+                alert('Error: ' + error);
+                console.error('Receiving error:', error);
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                validateForm();
+            }
         });
 
-        function updateSummary() {
-            const summaryDiv = document.getElementById('receivingSummary');
-            
-            if (receivedItems.length === 0) {
-                summaryDiv.innerHTML = '<p><em>No items received yet today.</em></p>';
-                return;
-            }
-
-            const totalValue = receivedItems.reduce((sum, item) => sum + item.totalCost, 0);
-            const totalItems = receivedItems.reduce((sum, item) => sum + item.quantity, 0);
-
-            summaryDiv.innerHTML = `
-                <p><strong>Items Received:</strong> ${totalItems} units</p>
-                <p><strong>Total Value:</strong> $${totalValue.toFixed(2)}</p>
-                <hr>
-                ${receivedItems.map(item => `
-                    <div style="margin-bottom: 10px; padding: 10px; background-color: white; border-radius: 4px;">
-                        <strong>${item.name}</strong> - ${item.quantity} units @ $${item.unitCost.toFixed(2)} = $${item.totalCost.toFixed(2)}
-                        <br><small>Supplier: ${item.supplier} | ${item.timestamp}</small>
-                    </div>
-                `).join('')}
-            `;
+        function showError(error) {
+            console.error('Error loading inventory:', error);
+            document.getElementById('loadingMessage').innerHTML = 
+                '<span style="color: #dc2626;">Error loading inventory data. Please refresh the page.</span>';
         }
 
-        // Initialize
-        updateSummary();
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.input-group')) {
+                searchResults.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
